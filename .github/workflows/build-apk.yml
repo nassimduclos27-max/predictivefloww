@@ -16,16 +16,18 @@ jobs:
       - name: Build web app
         run: npm run build
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-      - name: Install Capacitor
-        run: |
-          npm install @capacitor/core @capacitor/android
-          npx cap sync android
+      - name: Install Capacitor CLI
+        run: npm install -g @capacitor/cli
+      - name: Install Capacitor packages
+        run: npm install @capacitor/core @capacitor/android
+      - name: Sync Capacitor
+        run: npx cap sync android
       - name: Build APK
         run: |
           cd android
