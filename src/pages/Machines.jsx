@@ -1,6 +1,85 @@
 import React, { useState, useEffect } from 'react'
 import { machinesAPI } from '../api/client'
 
+function ComponentForm({ machineId, onDone }) {
+  const [form, setForm] = useState({ name: '', type: '', threshold_min: 0, threshold_max: 100, unit: '' })
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    try { await machinesAPI.createComponent(machineId, form); onDone() } catch {}
+  }
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-2 mt-3 border-t border-slate-700 pt-3">
+      <p className="text-xs font-semibold text-slate-400 uppercase">Nouveau composant</p>
+      <input className="input text-sm" placeholder="Nom (ex: Température moteur)" value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
+      <input className="input text-sm" placeholder="Type (temperature, vibration...)" value={form.type} onChange={e => setForm({...form, type: e.target.value})} />
+      <div className="flex gap-2">
+        <input className="input text-sm" type="number" placeholder="Seuil min" value={form.threshold_min} onChange={e => setForm({...form, threshold_min: Number(e.target.value)})} />
+        <input className="input text-sm" type="number" placeholder="Seuil max" value={form.threshold_max} onChange={e => setForm({...form, threshold_max: Number(e.target.value)})} />
+        <input className="input text-sm" placeholder="Unité (°C, mm/s...)" value={form.unit} onChange={e => setForm({...form, unit: e.target.value})} />
+      </div>
+      <button type="submit" className="btn-primary text-sm">Ajouter le composant</button>
+    </form>
+  )
+}
+
+function MachineCard({ machine, onRefresh }) {
+  const [components, setComponents] = useState([])
+  const [showComponents, setShowComponents] = useState(false)
+  const [showForm, setShowForm] = useState(false)
+
+  const loadComponents = async () => {
+    try {
+      const res = await machinesAPI.listComponents(machine.id)
+      setComponents(res.data?.components || [])
+    } catch {}
+  }
+
+  const handleToggle = async () => {
+    if (!showComponents) await loadComponents()
+    setShowComponents(!showComponents)
+  }
+
+  return (
+    <div className="card">
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="font-semibold text-white">{machine.name}</h3>
+        <span className={`badge-${machine.status === 'ok' ? 'success' : machine.status === 'warning' ? 'warning' : 'danger'}`}>{machine.status}</span>
+      </div>
+      <p className="text-sm text-slate-400">{machine.type} • {machine.location}</p>
+      {machine.description && <p className="text-xs text-slate-500 mt-1">{machine.description}</p>}
+      
+      <button onClick={handleToggle} className="btn-secondary text-xs mt-3 w-full">
+        {showComponents ? 'Masquer les composants' : 'Voir les composants'}
+      </button>
+
+      {showComponents && (
+        <div className="mt-3">
+          {components.length === 0 ? (
+            <p className="text-xs text-slate-400">Aucun composant</p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {components.map(c => (
+                <div key={c.id} className="bg-slate-700/50 rounded-lg px-3 py-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-white">{c.name}</span>
+                    <span className="text-xs text-slate-400">{c.type}</span>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-0.5">Seuils : {c.threshold_min} – {c.threshold_max} {c.unit}</p>
+                  <p className="text-xs text-slate-500">ID composant : {c.id}</p>
+                </div>
+              ))}
+            </div>
+          )}
+          <button onClick={() => setShowForm(!showForm)} className="btn-secondary text-xs mt-2 w-full">
+            {showForm ? 'Annuler' : '+ Ajouter un composant'}
+          </button>
+          {showForm && <ComponentForm machineId={machine.id} onDone={() => { setShowForm(false); loadComponents() }} />}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function Machines() {
   const [machines, setMachines] = useState([])
   const [loading, setLoading] = useState(true)
@@ -53,16 +132,7 @@ export default function Machines() {
         <div className="card text-center text-slate-400 py-10">Aucune machine enregistrée</div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
-          {machines.map(m => (
-            <div key={m.id} className="card">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold text-white">{m.name}</h3>
-                <span className={`badge-${m.status === 'ok' ? 'success' : m.status === 'warning' ? 'warning' : 'danger'}`}>{m.status}</span>
-              </div>
-              <p className="text-sm text-slate-400">{m.type} • {m.location}</p>
-              {m.description && <p className="text-xs text-slate-500 mt-1">{m.description}</p>}
-            </div>
-          ))}
+          {machines.map(m => <MachineCard key={m.id} machine={m} onRefresh={load} />)}
         </div>
       )}
     </div>
