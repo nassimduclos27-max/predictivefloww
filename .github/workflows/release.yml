@@ -30,8 +30,17 @@ jobs:
       - name: Sync Capacitor
         run: npx --yes @capacitor/cli sync android
 
-      - name: Decode keystore
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/predictiveflow.keystore
+      - name: Generate Keystore
+        run: |
+          keytool -genkey -v \
+            -keystore android/app/predictiveflow.keystore \
+            -alias predictiveflow \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -storepass flowpack2026 \
+            -keypass flowpack2026 \
+            -dname "CN=Flow Pack, OU=Dev, O=Flowpack, L=Paris, ST=75, C=FR"
 
       - name: Build Release APK
         run: |
