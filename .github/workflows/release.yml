@@ -31,13 +31,13 @@ jobs:
         run: npx cap sync android
 
       - name: Decode keystore
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/predictiveflow.keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/predictiveflow.keystore
 
       - name: Build Release APK
         run: |
           cd android
           ./gradlew assembleRelease \
-            -Pandroid.injected.signing.store.file=predictiveflow.keystore \
+            -Pandroid.injected.signing.store.file=$(pwd)/app/predictiveflow.keystore \
             -Pandroid.injected.signing.store.password=flowpack2026 \
             -Pandroid.injected.signing.key.alias=predictiveflow \
             -Pandroid.injected.signing.key.password=flowpack2026
