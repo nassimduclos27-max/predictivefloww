@@ -1,4 +1,4 @@
-const API_URL = "https://predictiveflow-production.up.railway.app";
+const API_URL = "https://predictivefloww-production-a2eb.up.railway.app";
 
 export const api = async (endpoint, options = {}) => {
   const token = localStorage.getItem("token");
