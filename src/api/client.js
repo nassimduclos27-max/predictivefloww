@@ -73,7 +73,7 @@ export const adminAPI = {
 
 export const weibullAPI = {
   analyze: (componentId, params) => api.post(`/sensors/weibull/${componentId}`, params),
-  stats: (machineId) => api.get(`/sensors/stats/${machineId}`),
+  stats: (machineId) => api.get(`/weibull/machine/${machineId}`),
 }
 
 export const quotesAPI = {
