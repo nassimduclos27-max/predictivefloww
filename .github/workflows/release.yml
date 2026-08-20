@@ -1,0 +1,49 @@
+name: Build Release APK
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      - name: Decode keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/predictiveflow.keystore
+
+      - name: Build Release APK
+        run: |
+          cd android
+          ./gradlew assembleRelease \
+            -Pandroid.injected.signing.store.file=predictiveflow.keystore \
+            -Pandroid.injected.signing.store.password=flowpack2026 \
+            -Pandroid.injected.signing.key.alias=predictiveflow \
+            -Pandroid.injected.signing.key.password=flowpack2026
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: predictiveflow-release
+          path: android/app/build/outputs/apk/release/app-release.apk
