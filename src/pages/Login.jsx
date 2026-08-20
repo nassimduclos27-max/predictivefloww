@@ -33,16 +33,16 @@ export default function Login() {
         </div>
         <div className="card">
           <h2 className="text-lg font-semibold text-white mb-6">Connexion</h2>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form autoComplete="off" onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
               <label className="label">Email</label>
-              <input type="email" className="input" value={email}
+              <input type="email" autoComplete="off" className="input" value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="admin@flowpack.fr" required />
             </div>
             <div>
               <label className="label">Mot de passe</label>
-              <input type="password" className="input" value={password}
+              <input type="password" autoComplete="new-password" className="input" value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="••••••••" required />
             </div>
