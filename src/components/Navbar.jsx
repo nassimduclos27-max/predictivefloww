@@ -8,21 +8,19 @@ export default function Navbar() {
   const location = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
 
-  const handleLogout = () => {
-    logout()
-    navigate('/login')
-  }
+  const handleLogout = () => { logout(); navigate('/login') }
 
   const links = [
-    { to: '/', label: 'Dashboard' },
-    { to: '/machines', label: 'Machines' },
-    { to: '/alertes', label: 'Alertes' },
-    { to: '/projets', label: 'Projets' },
-    { to: '/messagerie', label: 'Messagerie' },
+    { to: '/', label: '📊 Dashboard' },
+    { to: '/machines', label: '⚙️ Machines' },
+    { to: '/alertes', label: '🚨 Alertes' },
+    { to: '/weibull', label: '📈 Weibull' },
+    { to: '/projets', label: '📁 Projets' },
+    { to: '/messagerie', label: '💬 Messagerie' },
     ...(isAdmin ? [
-      { to: '/devis', label: 'Devis' },
-      { to: '/factures', label: 'Factures' },
-      { to: '/admin', label: 'Admin' },
+      { to: '/devis', label: '📄 Devis' },
+      { to: '/factures', label: '💰 Factures' },
+      { to: '/admin', label: '👤 Admin' },
     ] : []),
   ]
 
@@ -30,8 +28,6 @@ export default function Navbar() {
     <nav className="bg-slate-800 border-b border-slate-700 px-4 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <span className="font-bold text-white text-lg">⚡ PredictiveFlow</span>
-
-        {/* Desktop */}
         <div className="hidden md:flex items-center gap-1">
           {links.map(l => (
             <Link key={l.to} to={l.to}
@@ -40,16 +36,12 @@ export default function Navbar() {
             </Link>
           ))}
         </div>
-
         <div className="hidden md:flex items-center gap-3">
           <span className="text-xs text-slate-400">{user?.email}</span>
           <button onClick={handleLogout} className="btn-secondary text-sm py-1">Déconnexion</button>
         </div>
-
-        {/* Mobile */}
         <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-slate-300 text-2xl">☰</button>
       </div>
-
       {menuOpen && (
         <div className="md:hidden mt-2 flex flex-col gap-1">
           {links.map(l => (

@@ -13,6 +13,7 @@ import Factures from './pages/Factures'
 import Projets from './pages/Projets'
 import ProjetDetail from './pages/ProjetDetail'
 import Messagerie from './pages/Messagerie'
+import Weibull from './pages/Weibull'
 
 function Loader() {
   return (
@@ -55,6 +56,7 @@ function AppRoutes() {
       <Route path="/" element={<PrivateRoute><AppLayout><Dashboard /></AppLayout></PrivateRoute>} />
       <Route path="/machines" element={<PrivateRoute><AppLayout><Machines /></AppLayout></PrivateRoute>} />
       <Route path="/alertes" element={<PrivateRoute><AppLayout><Alertes /></AppLayout></PrivateRoute>} />
+      <Route path="/weibull" element={<PrivateRoute><AppLayout><Weibull /></AppLayout></PrivateRoute>} />
       <Route path="/messagerie" element={<PrivateRoute><AppLayout><Messagerie /></AppLayout></PrivateRoute>} />
       <Route path="/projets" element={<PrivateRoute><AppLayout><Projets /></AppLayout></PrivateRoute>} />
       <Route path="/projets/:id" element={<PrivateRoute><AppLayout><ProjetDetail /></AppLayout></PrivateRoute>} />
